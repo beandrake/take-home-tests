@@ -335,7 +335,7 @@ public class WorkEntryList
       }
     }
     
-    // put hashmap data into array (for easy quicksort momentarily)
+    // put hashmap data into array (for easy mergesort momentarily)
     UserEntries[] userEntriesList = new UserEntries[allUsers.size()];
     int i = 0;
     for(Long user : allUsers.keySet())
