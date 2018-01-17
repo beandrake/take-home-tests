@@ -7,9 +7,9 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.HashSet;
 import java.util.HashMap;
+import java.util.TreeSet;
 import java.util.TreeMap;
 import java.util.Iterator;
-import java.util.Arrays;
 
 /**
  * A list of WorkEntries, capable of doing some analysis on the data
@@ -64,9 +64,8 @@ public class WorkEntryList
    * A piece of work in the system may undergo various statuses over time.
    * The StatusPath object represents a piece of work's progression through these statusues.
    */
-  private class StatusPath implements Comparable<StatusPath>
+  public class StatusPath implements Comparable<StatusPath>
   {
-    // sorted, O(log(n)) insertion/retrieval
     private TreeMap<Long, Long> path = new TreeMap<Long, Long>();
     
     /* constructor, empty list */
@@ -177,7 +176,7 @@ public class WorkEntryList
    * WorkEntryList member variables and methods - start
    *****************************************************/
   
-  // average O(1) insertion/retrieval, no duplicates
+  
   private HashSet<WorkEntry> entryList = new HashSet<WorkEntry>(); 
   
   /* constructor */
@@ -259,9 +258,9 @@ public class WorkEntryList
    * If the value is null, returns -1 as a sentinel.
    * 
    * Assumption: line is formatted correctly as either...   
-   *    "end_time": 1489499641,   
+   *    "start_time": 1489499641,   
    * ...or...  
-   *    "end_time": null,  
+   *    "start_time": null,  
    */
   private long parseDataFromLine(String line)
   {
@@ -295,9 +294,10 @@ public class WorkEntryList
    */
   public long getNumberOfUniqueStatuses()
   {    
-    // average O(1) insertion/retrieval, no duplicates
+    // HashSet will generally have constant-time lookup/add/etc
     HashSet<Long> statusList = new HashSet<Long>();
     
+    // record all existing statuses in a list (without duplicates)
     for (WorkEntry entry : entryList)
     {
       statusList.add(entry.getStatus());
@@ -309,7 +309,7 @@ public class WorkEntryList
 
   
   /**
-   * Outputs a list, in descending order, of the X users assigned to the most entries.
+   * Outputs a list, in descending order, of the X users assigned to the most tickets.
    */
   public void printMostActiveUsers(int maxUsersToPrint)
   {
@@ -319,7 +319,6 @@ public class WorkEntryList
     }
     
     // create list of all users and how many entries they were listed in
-    // average O(1) insertion/retrieval
     HashMap<Long, Integer> allUsers = new HashMap<Long, Integer>();
     for (WorkEntry entry : entryList)
     {        
@@ -335,32 +334,21 @@ public class WorkEntryList
       }
     }
     
-    // put hashmap data into array (for easy quicksort momentarily)
-    UserEntries[] userEntriesList = new UserEntries[allUsers.size()];
-    int i = 0;
+    // insert entries into sorted list (will sort with high entries earlier in list)
+    TreeSet<UserEntries> mostActiveUsers = new TreeSet<UserEntries>();    
     for(Long user : allUsers.keySet())
     {
-      Integer numEntries = allUsers.get(user);
-
-      userEntriesList[i] = new UserEntries(user, numEntries);
-      i++;
-    }
-    
-    // mergesort the list (puts high numEntries before low numEntries)
-    // always O(nlog(n)) time, O(n) space
-    Arrays.sort(userEntriesList);
-    
-    if(maxUsersToPrint > userEntriesList.length)
-    {
-      maxUsersToPrint = userEntriesList.length;
+      mostActiveUsers.add(new UserEntries(user, allUsers.get(user)));
     }
     
     // do the printing
-    for(int index = 0; index < maxUsersToPrint; index++)
+    Iterator<UserEntries> iterator = mostActiveUsers.iterator();
+    int i=1;
+    while(i <= maxUsersToPrint && iterator.hasNext())
     {
-      long user_id = userEntriesList[index].user_id;
-      int entries = userEntriesList[index].entries;
-      System.out.println("" + (index+1) + ". user" + user_id + ": " + entries);
+      UserEntries data = iterator.next();
+      System.out.println("" + i + ". user" + data.user_id + ": " + data.entries);
+      i++;
     }
   }
   
@@ -378,7 +366,6 @@ public class WorkEntryList
     }
     
     //first, make a hashmap with key:piece_id and value:errorAmount
-    // average O(1) insertion/retrieval
     HashMap<Long, Integer> pieceList = new HashMap<Long, Integer>();    
     for (WorkEntry entry : entryList)
     {        
@@ -425,7 +412,6 @@ public class WorkEntryList
    */
   public long getAverageTimeSpentInStatus(long status)
   {    
-    // average O(1) insertion/retrieval
     HashSet<Long> allPieces = new HashSet<Long>();
     long totalTime = 0;    
     for(WorkEntry entry : entryList)
@@ -451,7 +437,6 @@ public class WorkEntryList
   public long[] getMostCommonPath()
   {
     // look through all entries, make paths for each piece
-    // average O(1) insertion/retrieval
     HashMap<Long, StatusPath> pathList = new HashMap<Long, StatusPath>();    
     for(WorkEntry entry : entryList)
     {       
@@ -473,7 +458,6 @@ public class WorkEntryList
     // while doing this, keep track of the path with the highest tally
     int highestTally = 0;
     StatusPath mostCommonPath = null;
-    // average O(1) insertion/retrieval
     HashMap<StatusPath, Integer> pathTallies = new HashMap<StatusPath, Integer>();
     for(long piece_id : pathList.keySet())
     {

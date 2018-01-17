@@ -13,10 +13,6 @@
  * start_time: Time that the piece began being processed in the status
  * end_time: Time that the piece finished being processed in the status;
  *           the difference between end_time and start_time indicates how long the piece spent in the status 
- *
- * Assumptions:
- *    All field values will be positive.
- *    A valid WorkEntry must contain positive values for id, piece_id, status, and start_time.
  */
 public class WorkEntry implements Comparable<WorkEntry>{
   
@@ -40,7 +36,7 @@ public class WorkEntry implements Comparable<WorkEntry>{
   }   
   
   
-  /* compareTo, equals, hashCode all use unique id */
+  /* compareTo, equals, hashCode all use unique id field */
   
   public int compareTo(WorkEntry other)
   {
@@ -132,8 +128,12 @@ public class WorkEntry implements Comparable<WorkEntry>{
   {
     end_time = num;
   }
+   
+ 
+  
 }
 /**
  * WorkEntry.java end
  * Written in Java
  */ 
+
