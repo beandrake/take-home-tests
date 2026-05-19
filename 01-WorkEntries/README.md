@@ -1,6 +1,6 @@
 This was part of an online assessment for an entry-level software development position.  Each question had a single text field to enter the code required to solve the problem.
 
-In answering these questions, I wanted to follow OOP guidelines and write code that was above correct, readable, and efficient (in that order).  I also tried to follow the Extreme Programming value of Simplicity, which more or less meant that I aimed to not overdesign my classes by making too many assumptions about the larger context they would exist in.
+In answering these questions, I wanted to follow OOP guidelines and write code that was correct, readable, and efficient (in that order).  I also tried to follow the Extreme Programming value of Simplicity, which more or less meant that I aimed to not overdesign my classes by making too many assumptions about the larger context they would exist in.
 
 Interesting things that came out of this test:
 - I gained experience using a variety of different Collection structures to solve problems related to a single data set.
